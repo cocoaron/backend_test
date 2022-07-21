@@ -1,9 +1,11 @@
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 engine = create_engine(
-    "mysql+pymysql://root:mecha07182022!@localhost:3306/dummy?charset=utf8",
+    # DB url 설정
+"mysql+pymysql://root:mecha07182022!@localhost:3306/dummy?charset=utf8",
+    # "mysql+pymysql://(user):(password)@localhost:(port)/(database)?charset=utf8",
     encoding = "utf-8",
     echo = True)
 

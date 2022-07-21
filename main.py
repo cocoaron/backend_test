@@ -1,4 +1,5 @@
 # install fastapi, uvicorn, sqlalchemy, pymysql
+# Setup mysql database and table beforehand
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -12,7 +13,7 @@ from starlette.middleware.cors import CORSMiddleware
 import time
 
 from db import session
-from model import UserTable, user
+from model import testTable, test
 
 app = FastAPI()
 
@@ -65,24 +66,28 @@ async def userinfo(request: Request, id: str):
 	return templates.TemplateResponse("userinfo.html", {"request": request, "id":id})
 '''
 
+# 상단은 html 연결에 대한 코드
+###################################################################
+# 하단은 DB CRUD에 대한 코드
+
 @app.get("/users")
 def read_users():
 
-	users = session.query(UserTable).all()
+	users = session.query(testTable).all()
 
 	return users
 
 @app.get("/users/{user_id}")
 def read_user(user_id: int):
 
-	user = session.query(UserTable).filter(UserTable.id == user_id).first()
+	user = session.query(testTable).filter(testTable.id == user_id).first()
 
 	return user
 
 @app.post("/users")
 def create_user(name: str, age: int):
 
-	user = UserTable()
+	user = testTable()
 	user.name = name
 	user.age = age
 
@@ -92,19 +97,20 @@ def create_user(name: str, age: int):
 	return f"{name} has been created."
 
 @app.put("/users")
-def update_users(users: List[user]):
+def update_users(users: List[test]):
 
-	for i in users:
-		user = session.query(UserTable).filter(UserTable.id == i.id).first()
-		user.name = i.name
-		user.age = i.age
+	for find in users:
+		test = session.query(testTable).filter(testTable.id == find.id).first()
+		test.name = find.name
+		test.age = find.age
+		session.commit()
 
-	return f"{i.name} has been updated."
+	return f"{find.name} has been updated."
 
 @app.delete("/users")
 def delete_users(user_id: int):
 
-	user = session.query(UserTable).filter(UserTable.id == user_id).delete()
+	user = session.query(testTable).filter(testTable.id == user_id).delete()
 	session.commit()
 
-	return read_users
+	return f"Successfully deleted."
